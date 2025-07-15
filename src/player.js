@@ -1,7 +1,9 @@
 //player.js
 
+import { keys } from "./input";
+
 // Define objeto player
-const player = {
+export const player = {
   x: 50,
   y: 300,
   width: 50,
@@ -14,9 +16,10 @@ const player = {
   gravity: 0.6,
   friction: 0.8,
   jumpcount: 2,
+  vterminal: 20,
 };
 
-function update_player() {
+export function update_player() {
   // Verifica as teclas pressinadas
   if (keys["KeyD"]) player.velx = player.speed;
   if (keys["KeyA"]) player.velx = -player.speed;
