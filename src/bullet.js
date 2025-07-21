@@ -1,5 +1,4 @@
 import { player } from "./player";
-import 
 
 export class Bullet {
   constructor(x, y, velx, velmax, rad, radmax) {
