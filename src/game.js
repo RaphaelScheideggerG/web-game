@@ -10,7 +10,7 @@ canvas.width = 800;
 canvas.height = 600;
 
 const groundy = 350;
-export { groundy };
+export { groundy, canvas, ctx };
 
 export function draw() {
   // Limpa a teclas
