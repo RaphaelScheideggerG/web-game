@@ -18,6 +18,8 @@ export const player = {
   jumpcount: 2,
   vterminal: 20,
   jumpable: true,
+  lastx: 1,
+  lasty: 0,
 };
 
 export function update_player() {
@@ -48,6 +50,20 @@ export function update_player() {
       player.jumpable = true;
     }
   });
+
+  // Ultima direção
+  // eixo x
+  if (player.velx > 0) {
+    player.lastx = 1;
+  } else if (player.velx < 0) {
+    player.lastx = -1;
+  }
+  // eixo y
+  if (player.vely > 0) {
+    player.lasty = 1;
+  } else if (player.vely < 0) {
+    player.lastx = -1;
+  }
 
   // Atualiza a posição do player
   player.x += player.velx;
