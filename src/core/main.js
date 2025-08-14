@@ -1,7 +1,7 @@
 // main.js
 // Loop 60 fps
 
-import { update_physics } from "./physics";
+import { update_physics } from "../utils/physics";
 import { update_player } from "./player";
 import { draw } from "./game";
 
