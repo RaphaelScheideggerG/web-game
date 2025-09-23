@@ -23,7 +23,6 @@ export const player = {
   lasty: 0,
   bullets: [],
   charging: false,
-  chargeStartTime: 0,
 };
 
 export function update_player() {
@@ -74,24 +73,29 @@ export function update_player() {
 
   // Disparo e criação dos projéteis
   if (keys["KeyJ"]) {
+    player.charging = true;
     player.bullets.append(new Bullet());
   }
 
   // Atualiza todos os projéteis na lista
-  for (let bulet of player.bullets) {
-    // Tamanho
-    bulet.rad += 0.1;
+  for (let bullet of player.bullets) {
+    if (keys["KeyJ"]) {
+      // Tamanho
+      bullet.rad += 0.1;
 
-    // Velocidade
-    if (bulet.velx < bulet.velmax && bulet.vely < bulet.velmax) {
-      bulet.velx += 0.1;
-      bulet.vely += 0.1;
+      // Velocidade
+      while (bullet.velx < bullet.velmax && bullet.vely < bullet.velmax) {
+        bullet.velx += 0.1;
+        bullet.vely += 0.1;
+      }
     }
 
-    // Desenho do projétil -> Codigo antigo, deve ser atualizado
-    function drawbullet() {
-      ctx.arc(player.x, player.x, rad, 0, 2 * Math.PI, false);
+    if (!keys["KeyJ"] && length(player.bullets) !== 0) {
+      player.charging = false;
+      // Atulizar a posição com a velocidade do projétil
     }
+
+    // Atualizar o desenho do projétil
   }
 
   // Debug
