@@ -1,6 +1,7 @@
 //player.js
 
 import { keys } from "./input";
+import { Bullet } from "./bullet";
 
 // Define objeto player
 export const player = {
@@ -20,6 +21,9 @@ export const player = {
   jumpable: true,
   lastx: 1,
   lasty: 0,
+  bullets: [],
+  charging: false,
+  chargeStartTime: 0,
 };
 
 export function update_player() {
@@ -42,14 +46,12 @@ export function update_player() {
   }
 
   // Pulo controlado
-  document.addEventListener("keyup", (e) => {
-    if (e.code === "Space") {
-      if (player.vely < 0) {
-        player.vely *= 0.4;
-      }
-      player.jumpable = true;
+  if (!keys["Space"] && !player.jumpable && player.jumpcount < 2) {
+    if (player.vely < 0) {
+      player.vely *= 0.4;
     }
-  });
+    player.jumpable = true;
+  }
 
   // Ultima direção
   // eixo x
@@ -70,13 +72,35 @@ export function update_player() {
   player.y += player.vely;
   player.grounded = false;
 
+  // Disparo e criação dos projéteis
+  if (keys["KeyJ"]) {
+    player.bullets.append(new Bullet());
+  }
+
+  // Atualiza todos os projéteis na lista
+  for (let bulet of player.bullets) {
+    // Tamanho
+    bulet.rad += 0.1;
+
+    // Velocidade
+    if (bulet.velx < bulet.velmax && bulet.vely < bulet.velmax) {
+      bulet.velx += 0.1;
+      bulet.vely += 0.1;
+    }
+
+    // Desenho do projétil -> Codigo antigo, deve ser atualizado
+    function drawbullet() {
+      ctx.arc(player.x, player.x, rad, 0, 2 * Math.PI, false);
+    }
+  }
+
   // Debug
-  console.log(
-    /*"ArrowLeft:",
+  /*console.log(
+    "ArrowLeft:",
       keys["ArrowLeft"],
       "ArrowRight:",
-      keys["ArrowRight"]*/
+      keys["ArrowRight"]
     "jumpcount:",
     player.jumpcount
-  );
+  );*/
 }
