@@ -1,4 +1,4 @@
-import { player } from "./player.js";
+import { player } from "./Player.js";
 import { Canvas } from "../core/game.js";
 
 export class Bullet {
@@ -8,8 +8,8 @@ export class Bullet {
       y: player.lasty,
     };
     this.position = {
-      x: player.x + 50 * this.direction.x,
-      y: player.y + 50 * this.direction.y,
+      x: player.position.x + 50 * this.direction.x,
+      y: player.position.y + 50 * this.direction.y,
     };
     this.power = 0;
     this.maxPower = 180; // 3s em 60 fps
@@ -17,8 +17,8 @@ export class Bullet {
     this.fired = false;
   }
   drawBullet() {
-    this.position.x = player.x + 50 * this.direction.x; // Atualiza posição
-    this.position.y = player.y + 50 * this.direction.y; // Idem
+    this.position.x = player.position.x + 50 * this.direction.x; // Atualiza posição
+    this.position.y = player.position.y + 50 * this.direction.y; // Idem mas para eixo y
     Canvas.ctx.fillStyle = "#ff0"; // cor da bala
     Canvas.ctx.beginPath();
     Canvas.ctx.arc(this.position.x, this.position.y, 5, 0, Math.PI * 2);

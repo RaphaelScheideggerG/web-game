@@ -1,17 +1,22 @@
 //player.js
 
-import { Keys } from "./input";
-import { Bullet } from "./bullet";
+import { Keys } from "./input.js";
+import { Bullet } from "./Bullet.js";
+import { Canvas } from "../core/Canvas.js";
 
 // Define objeto player
 export const player = {
-  x: 50,
-  y: 300,
+  position: {
+    x: 50,
+    y: 300,
+  },
   width: 50,
   height: 50,
-  velx: 0,
-  vely: 0,
-  speed: 5,
+  speed: {
+    x: 0,
+    y: 0,
+  },
+  vel: 5,
   jumpforce: -12,
   grounded: false,
   gravity: 0.6,
@@ -26,24 +31,24 @@ export const player = {
   cooldown: 0,
 
   drawPlayer() {
-    ctx.fillStyle = "#0f0";
-    ctx.fillRect(player.x, player.y, player.width, player.height);
+    Canvas.ctx.fillStyle = "#0f0";
+    Canvas.ctx.fillRect(player.position.x, player.position.y, player.width, player.height);
   },
 };
 
 export function update_player() {
   // Verifica as teclas pressinadas
-  if (Keys["KeyD"]) player.velx = player.speed;
-  if (Keys["KeyA"]) player.velx = -player.speed;
+  if (Keys["KeyD"]) player.speed.x = player.vel;
+  if (Keys["KeyA"]) player.speed.y = -player.vel;
 
   // Parada brusca
   if (Keys["KeyD"] && Keys["KeyA"]) {
-    player.velx = 0;
+    player.speed.x = 0;
   }
 
   // Pulo duplo
   if (Keys["Space"] && player.jumpcount > 0 && player.jumpable == true) {
-    player.vely = player.jumpforce;
+    player.speed.y = player.jumpforce;
     player.grounded = false;
     Keys["Space"] = false;
     player.jumpcount -= 1;
@@ -52,8 +57,8 @@ export function update_player() {
 
   // Pulo controlado
   if (!Keys["Space"] && !player.jumpable && player.jumpcount < 2) {
-    if (player.vely < 0) {
-      player.vely *= 0.4;
+    if (player.speed.y < 0) {
+      player.speed.y *= 0.4;
     }
     player.jumpable = true;
   }
@@ -75,8 +80,8 @@ export function update_player() {
   }
 
   // Atualiza a posição do player
-  player.x += player.velx;
-  player.y += player.vely;
+  player.x += player.speed.x;
+  player.y += player.speed.y;
   player.grounded = false;
 
   // player can shoot
