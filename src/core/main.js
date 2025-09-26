@@ -3,12 +3,12 @@
 
 import { update_physics } from "../utils/physics";
 import { update_player } from "./player";
-import { draw } from "./game";
+import { drawMap } from "./Map";
 
 function loop() {
+  drawMap();
   update_player();
   update_physics();
-  draw();
   requestAnimationFrame(loop);
 }
 

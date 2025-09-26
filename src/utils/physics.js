@@ -1,7 +1,7 @@
 // physics.js
 
 import { player } from "./player";
-import { groundy } from "../core/game";
+import { groundy } from "../core/Map";
 
 export function update_physics() {
   // Atrito
