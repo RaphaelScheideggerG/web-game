@@ -1,25 +1,25 @@
 // physics.js
 
-import { player } from "./player";
-import { groundy } from "../core/Map";
+import { player } from "../entities/Player.js";
+import { Map } from "../core/Map.js";
 
 export function update_physics() {
   // Atrito
-  player.velx *= player.friction;
+  player.speed.x *= player.friction;
 
   // Gravidade
-  player.vely += player.gravity;
+  player.speed.y += player.gravity;
 
   // Colisão com o chão
-  if (player.y + player.height > groundy) {
-    player.y = groundy - player.height;
-    player.vely = 0;
+  if (player.position.y + player.height > Map.groundy) {
+    player.position.y = Map.groundy - player.height;
+    player.speed.y = 0;
     player.grounded = true;
     player.jumpcount = 2;
   }
 
   // Velocidade terminal
-  if (player.vely >= player.vterminal) {
-    player.vely = player.vterminal;
+  if (player.speed.y >= player.vterminal) {
+    player.speed.y = player.vterminal;
   }
 }

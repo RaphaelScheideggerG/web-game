@@ -1,6 +1,16 @@
+const canvas = document.getElementById("game");
+
+// Defina o tamanho real do elemento canvas
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// Agora sim, pegue o contexto
+const ctx = canvas.getContext("2d");
+
+// Exporte tudo sincronizado
 export const Canvas = {
-  canvas: document.getElementById("game"),
-  ctx: document.getElementById("game").getContext("2d"),
-  width: window.innerWidth,
-  height: window.innerHeight,
+  canvas,
+  ctx,
+  width: canvas.width,
+  height: canvas.height
 };
