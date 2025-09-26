@@ -57,7 +57,7 @@ export class Bullet {
     if (this.power < 180) {
       // 3 seg para atingir 180
       this.power++;
-      this.power++; // Ignore a gambiarra, isso é só um teste 😂
+      this.power++;
       this.power++;
     }
     const vel = Math.max(this.power / 18, 6); // vel min de 5, a maxima já é 10 pelo if (this.power < 180)
