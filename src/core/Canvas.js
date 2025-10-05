@@ -4,10 +4,10 @@ const canvas = document.getElementById("game");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-// Agora sim, pegue o contexto
+// pegua o contexto
 const ctx = canvas.getContext("2d");
 
-// Exporte tudo sincronizado
+// Exporta sincronizado
 export const Canvas = {
   canvas,
   ctx,
