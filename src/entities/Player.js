@@ -1,140 +1,102 @@
-//player.js
-
-import { Keys } from "../utils/input.js";
-import { JustPressed } from "../utils/input.js";
+import { Keys, JustPressed } from "../utils/input.js";
 import { Bullet } from "./Bullet.js";
 import { Canvas } from "../core/Canvas.js";
 
-// Define objeto player
-export const player = {
-  position: {
-    x: 50,
-    y: 300,
-  },
-  width: 50,
-  height: 50,
-  speed: {
-    x: 0,
-    y: 0,
-  },
-  vel: 5,
-  jumpforce: -12,
-  grounded: false,
-  gravity: 0.6,
-  friction: 0.7,
-  jumpcount: 2,
-  vterminal: 20,
-  jumpCooldown: 15,
-  aim:{
-  x: 0,
-  y: 0,
-  },
-  lastAim:{
-  x: 0,
-  y: 0,
-  },
-  bullets: [],
-  charging: false,
-  cooldown: 0,
+export class Player {
+  constructor(x, y) {
+    this.position = { x, y };
+    this.width = 50;
+    this.height = 75;
+    this.speed = { x: 0, y: 0 };
+    this.vel = 5;
+    this.jumpforce = -12;
+    this.grounded = false;
+    this.gravity = 0.6;
+    this.friction = 0.7;
+    this.jumpcount = 2;
+    this.vterminal = 20;
+    this.jumpCooldown = 15;
+    this.shotCooldown = 60;
+    this.cooldown = 0;
+    this.charging = false;
+    this.aim = { x: 0, y: 0 };
+    this.lastAim = { x: 1, y: 0 };
+    this.bullets = [];
+  }
 
-  drawPlayer() {
+  draw() {
     Canvas.ctx.fillStyle = "#0f0";
-    Canvas.ctx.fillRect(player.position.x, player.position.y, player.width, player.height);
-  },
-};
+    Canvas.ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
 
-export function update_player() {
-  player.drawPlayer();
-  // Verifica as teclas pressinadas
-  if (Keys["KeyD"]) {
-    player.speed.x = player.vel
-  };
-  if (Keys["KeyA"]) {
-    player.speed.x = -player.vel
-  };
-
-  // Parada brusca
-  if (Keys["KeyD"] && Keys["KeyA"]) {
-    player.speed.x = 0;
-    //console.log("ParadaBrusca")
+    // Barrinha de cooldown
+    const barWidth = (this.cooldown / this.shotCooldown) * this.width;
+    Canvas.ctx.fillStyle = "#ff0";
+    Canvas.ctx.fillRect(this.position.x, this.position.y - 10, barWidth, 5);
   }
 
-  // Pulo duplo //
-  if (JustPressed["Space"] && player.jumpcount > 0){
-    player.speed.y = player.jumpforce;
-    player.jumpcount--;
-    player.grounded = false;
+  move() {
+    if (Keys["KeyD"]) this.speed.x = this.vel;
+    if (Keys["KeyA"]) this.speed.x = -this.vel;
+    if (Keys["KeyD"] && Keys["KeyA"]) this.speed.x = 0;
+    if (!Keys["KeyD"] && !Keys["KeyA"]) this.speed.x *= this.friction;
+    this.position.x += this.speed.x;
   }
 
-  // Pulo controlado //
-  // /*
-  if (!Keys["Space"] && !player.grounded) {
-    if (player.speed.y < 0) {
-      player.speed.y *= 0.5;
+  jump() {
+    if (JustPressed["Space"] && this.jumpcount > 0) {
+      this.speed.y = this.jumpforce;
+      this.jumpcount--;
+      this.grounded = false;
     }
-    player.jumpable = true;
-  }
-  // */
-
-  // Mira && Ultima mira
-  // eixo x
-  if (Keys["KeyD"]) {
-    player.aim.x = 1;
-    player.lastAim.x = 1;
-    //console.log("keyD lastx")
-  } else {player.aim.x = 0;}
-  if (Keys["KeyA"]) {
-    player.aim.x = -1;
-    player.lastAim.x = -1;
-    //console.log("keyA")
-  }
-  // eixo y
-  if (Keys["KeyW"]) {
-    player.aim.y = -1;
-    player.lastAim.y = -1;
-    //console.log("KeyW")
-  }else {player.aim.y = 0;}
-  if (Keys["KeyS"]) {
-    player.aim.y = 1;
-    player.lastAim.y = 1;
-    //console.log("KeyS")
+    if (!Keys["Space"] && !this.grounded && this.speed.y < 0) {
+      this.speed.y *= 0.5;
+    }
+    this.position.y += this.speed.y;
   }
 
-  // Atualiza a posição do player
-  player.position.x += player.speed.x;
-  player.position.y += player.speed.y;
+  aimControl() {
+    this.aim.x = Keys["KeyD"] ? 1 : Keys["KeyA"] ? -1 : 0;
+    this.lastAim.x = this.aim.x || this.lastAim.x;
+    this.aim.y = Keys["KeyW"] ? -1 : Keys["KeyS"] ? 1 : 0;
+    this.lastAim.y = this.aim.y || this.lastAim.y;
+  }
 
-  // player can shoot
+  shoot() {
+    if (this.cooldown > 0) this.cooldown--;
 
-  // Disparo e criação dos projéteis
-  if (JustPressed["KeyJ"] && !player.charging) {
-    player.bullets.push(new Bullet());
-    player.charging = true;
-  } 
-  if (!Keys["KeyJ"]) {
-    player.charging = false;
-    for (let bullet of player.bullets) {
-      if (!bullet.fired) {
-        bullet.fired = true;
+    if (JustPressed["KeyK"] && !this.charging && this.cooldown === 0) {
+      this.bullets.push(new Bullet(this));
+      this.charging = true;
+      this.cooldown = this.shotCooldown;
+    }
+
+    if (!Keys["KeyK"]) {
+      this.charging = false;
+      for (let bullet of this.bullets) {
+        if (!bullet.fired) bullet.fired = true;
       }
     }
+
+    for (let bullet of this.bullets) {
+      if (!bullet.fired && this.charging) {
+        bullet.charge()
+      };
+      if (bullet.fired) {
+        bullet.shoot(); 
+        bullet.destroy();
+        if (bullet.destroy()) {
+          this.bullets.shift()
+        };
+      };
+    }
   }
 
-  for (let bullet of player.bullets) {
-    if (!bullet.fired && player.charging) {
-      bullet.charge();
-    }
-
-    if (bullet.fired) {
-      bullet.shoot();
-    }
+  updatePlayer() {
+    this.draw();
+    this.move();
+    this.jump();
+    this.aimControl();
+    this.shoot();
+    console.log(this.bullets);
   }
- 
-  // Debug
-  console.log(
-    " X:",player.position.x, "\n",
-    "y:",player.position.y, "\n",
-    "JumpCount:",player.jumpcount, "\n",
-    "Grounded:",player.grounded, "\n"
-  )
 }

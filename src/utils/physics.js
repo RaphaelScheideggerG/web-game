@@ -1,25 +1,23 @@
-// physics.js
-
-import { player } from "../entities/Player.js";
+// physics.js DEVE SER ATUALIZADO PARA RECEBER UMA LISTA DE OBJETOS
 import { Map } from "../core/Map.js";
 
-export function update_physics() {
+export function update_physics(object) {
   // Atrito
-  player.speed.x *= player.friction;
+  object.speed.x *= object.friction;
 
   // Gravidade
-  player.speed.y += player.gravity;
+  object.speed.y += object.gravity;
 
   // Colisão com o chão
-  if (player.position.y + player.height > Map.groundy) {
-    player.position.y = Map.groundy - player.height;
-    player.speed.y = 0;
-    player.grounded = true;
-    player.jumpcount = 2;
+  if (object.position.y + object.height > Map.groundy) {
+    object.position.y = Map.groundy - object.height;
+    object.speed.y = 0;
+    object.grounded = true;
+    object.jumpcount = 2;
   }
 
   // Velocidade terminal
-  if (player.speed.y >= player.vterminal) {
-    player.speed.y = player.vterminal;
+  if (object.speed.y >= object.vterminal) {
+    object.speed.y = object.vterminal;
   }
 }
